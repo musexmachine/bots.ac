@@ -69,6 +69,8 @@ Write exactly this content to `docs/decomposition.md`:
 
 `SPEC.md` is the product charter. Each row below is a "ships together, plans together" slice with its own design doc under `docs/specs/`. See `docs/superpowers/specs/2026-04-16-spec-decomposition-strategy-design.md` for the rules governing this file.
 
+Research material informing sub-spec design (notably the Web Agent browsing strategy and the deferred Agent Creator) lives in `docs/self-learning-agents/` with a curated summary in `docs/SELF_LEARNING_AGENTS.md`.
+
 ## Registry
 
 | ID  | Sub-spec                    | Status | Depends on             | Phase      | MVP |
@@ -759,7 +761,7 @@ _To be drafted._
 
 ## Context
 
-Searches the web, inspects and navigates pages, extracts structured data, summarizes and compares sources, supports long-horizon browsing. Uses a browsing strategy layer (working name `SelfEvolvingAgent`; specific framework is an open decision — any chosen strategy must support step planning, intermediate reflection, failure recovery, and bounded self-adaptation within a single run). Derived from SPEC.md → Built-in agents → Web Agent.
+Searches the web, inspects and navigates pages, extracts structured data, summarizes and compares sources, supports long-horizon browsing. Uses a browsing strategy layer (working name `SelfEvolvingAgent`) informed by `docs/self-learning-agents/` — see `docs/SELF_LEARNING_AGENTS.md` for the paper-by-paper assessment; candidate techniques include SAGE, Reflexion, Self-Refine, and EvoTest. Any chosen strategy must support step planning, intermediate reflection, failure recovery, and bounded self-adaptation within a single run. Derived from SPEC.md → Built-in agents → Web Agent.
 
 ## Scope
 
@@ -779,7 +781,7 @@ _To be drafted._
 
 ## Open questions
 
-_To be drafted — including: final choice of browsing strategy layer._
+_To be drafted — including: final choice of browsing strategy layer (candidates documented in `docs/self-learning-agents/`)._
 
 ## Verification
 
