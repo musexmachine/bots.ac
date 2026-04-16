@@ -82,7 +82,7 @@ Research material informing sub-spec design (notably the Web Agent browsing stra
 | f-compliance-posture            | Compliance posture                | stub   | —                      | foundation | no  |
 | 00  | workspace-shell             | stub   | f-identity-and-auth    | 1          | yes |
 | 01  | persistent-compute          | stub   | 00, f-workspace-policy | 1          | yes |
-| 02  | code-agent                  | stub   | 01, 11                 | 1          | yes |
+| 02  | code-agent                  | stub   | 01                     | 1          | yes |
 | 03  | audit-log                   | stub   | 00                     | 1          | yes |
 | --- | --------- MVP cut --------- | ---    | ---                    | ---        | --- |
 | 10  | router-agent                | stub   | 11, 23                 | 1          | no  |

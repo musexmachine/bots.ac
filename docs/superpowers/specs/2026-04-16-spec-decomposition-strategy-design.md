@@ -148,7 +148,7 @@ Things that could belong here but are pushed to another sub-spec or later phase.
 
 - Dependencies point **downward** only. If `02-code-agent` depends on `01-persistent-compute`, code-agent imports what it needs; persistent-compute knows nothing about code-agent.
 - **Cycles are forbidden.** If two sub-specs genuinely co-depend, they are one sub-spec — merge them.
-- **Foundation sub-specs** (`f-*`) have no dependencies and appear on the depends-on line of many others. They are the base of the graph.
+- **Foundation sub-specs** (`f-*`) do not depend on numbered sub-specs and appear on the depends-on line of many others. They are the base of the graph. A foundation spec may depend on another foundation spec (e.g., `f-public-api` depends on `f-identity-and-auth`); such inter-foundation edges are allowed.
 - A sub-spec may only be marked `approved` when every entry in its `depends-on` list is at least `approved`. Drafting is unrestricted; locking order is.
 
 ## Versioning

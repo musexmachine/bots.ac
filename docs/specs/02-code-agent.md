@@ -2,7 +2,7 @@
 
 **Status:** stub
 **Phase:** 1
-**Depends on:** 01, 11
+**Depends on:** 01
 **Required for MVP:** yes
 
 ## Context
