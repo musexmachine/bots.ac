@@ -14,13 +14,11 @@
 
 ## Prerequisite
 
-The plan edits `SPEC.md`, which currently lives on the main branch at `/Users/droxey/dev/repos/bots.ac/SPEC.md`. The worktree (`.claude/worktrees/adoring-banach/`) contains only `README.md`. Before executing this plan:
+Execute this plan from the repo root (the directory containing `SPEC.md`). All paths below are repo-root-relative (e.g. `docs/decomposition.md`). If you are working in a git worktree, verify you are on the correct branch before starting:
 
-**Option A (recommended):** Execute the plan directly in the main repo working tree (`/Users/droxey/dev/repos/bots.ac/`) on the main branch, since SPEC.md already has unstaged edits from the earlier verification pass. The scaffolding commit lands alongside those edits.
-
-**Option B:** Cherry-pick or merge the SPEC.md edits into the worktree branch first, then execute here. More steps, same result.
-
-The plan below uses repo-root-relative paths (e.g. `docs/decomposition.md`). Whichever option you pick, resolve those paths against the directory where SPEC.md lives.
+```bash
+git branch --show-current
+```
 
 ---
 
@@ -75,31 +73,31 @@ Research material informing sub-spec design (notably the Web Agent browsing stra
 
 | ID  | Sub-spec                    | Status | Depends on             | Phase      | MVP |
 |-----|-----------------------------|--------|------------------------|------------|-----|
-| f-identity             | Identity and authentication       | stub   | —                      | foundation | yes |
-| f-workspace-policy     | Workspace policy                  | stub   | —                      | foundation | yes |
-| f-billing              | Billing and cost surface          | stub   | —                      | foundation | yes |
-| f-multi-tenant         | Multi-tenant isolation            | stub   | —                      | foundation | no  |
-| f-data-retention       | Data retention and deletion       | stub   | —                      | foundation | no  |
-| f-public-api           | Public API                        | stub   | f-identity             | foundation | no  |
-| f-compliance           | Compliance posture                | stub   | —                      | foundation | no  |
-| 00  | workspace-shell             | stub   | f-identity             | 1          | yes |
+| f-identity-and-auth             | Identity and authentication       | stub   | —                      | foundation | yes |
+| f-workspace-policy              | Workspace policy                  | stub   | —                      | foundation | yes |
+| f-billing-and-cost              | Billing and cost surface          | stub   | —                      | foundation | yes |
+| f-multi-tenant-isolation        | Multi-tenant isolation            | stub   | —                      | foundation | no  |
+| f-data-retention                | Data retention and deletion       | stub   | —                      | foundation | no  |
+| f-public-api                    | Public API                        | stub   | f-identity-and-auth    | foundation | no  |
+| f-compliance-posture            | Compliance posture                | stub   | —                      | foundation | no  |
+| 00  | workspace-shell             | stub   | f-identity-and-auth    | 1          | yes |
 | 01  | persistent-compute          | stub   | 00, f-workspace-policy | 1          | yes |
 | 02  | code-agent                  | stub   | 01, 11                 | 1          | yes |
 | 03  | audit-log                   | stub   | 00                     | 1          | yes |
-| --- | --------- MVP cut ---------  | ---    | ---                    | ---        | --- |
+| --- | --------- MVP cut --------- | ---    | ---                    | ---        | --- |
 | 10  | router-agent                | stub   | 11, 23                 | 1          | no  |
 | 11  | skills-loader               | stub   | 00                     | 1          | no  |
 | 12  | web-agent                   | stub   | 11, 01                 | 1          | no  |
-| 13  | inbox-agent                 | stub   | 11, 22, f-identity     | 1          | no  |
+| 13  | inbox-agent                 | stub   | 11, 22, f-identity-and-auth | 1     | no  |
 | 14  | media-agent                 | stub   | 11, 01                 | 2          | no  |
 | 20  | natural-language-scheduler  | stub   | 21                     | 1          | no  |
 | 21  | trigger-engine              | stub   | 00                     | 1          | no  |
-| 22  | integration-framework       | stub   | f-identity             | 1          | no  |
+| 22  | integration-framework       | stub   | f-identity-and-auth    | 1          | no  |
 | 23  | memory-system               | stub   | 00                     | 1          | no  |
 | 24  | cache-layer                 | stub   | 00                     | 2          | no  |
-| 25  | model-routing               | stub   | f-billing              | 1          | no  |
+| 25  | model-routing               | stub   | f-billing-and-cost     | 1          | no  |
 | 26  | approvals-and-safety        | stub   | 03, f-workspace-policy | 1          | no  |
-| 27  | observability               | stub   | 03, f-billing          | 2          | no  |
+| 27  | observability               | stub   | 03, f-billing-and-cost | 2          | no  |
 | 28  | delivery-surfaces           | stub   | 00                     | 1          | no  |
 
 ## Status lifecycle
@@ -142,7 +140,7 @@ git commit -m "docs: populate sub-spec registry"
 - [ ] **Step 1: Write `docs/specs/f-identity-and-auth.md`**
 
 ````markdown
-# f-identity — Identity and authentication
+# f-identity-and-auth — Identity and authentication
 
 **Status:** stub
 **Phase:** foundation

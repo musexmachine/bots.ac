@@ -6,7 +6,7 @@
 
 ## Context
 
-SPEC.md is a product charter for bots.ac — a chat-first agent OS. A verification pass (`/Users/droxey/.claude/plans/mellow-cooking-wreath.md`) found that the spec is internally sound but too broad for a single implementation plan: it spans ~15 independent subsystems plus 7 foundational concerns that cut across all of them.
+SPEC.md is a product charter for bots.ac — a chat-first agent OS. A verification pass found that the spec is internally sound but too broad for a single implementation plan: it spans ~15 independent subsystems plus 7 foundational concerns that cut across all of them.
 
 Four of the five verification findings (placeholders, ambiguities, foundation stubs, consistency) were fixed inline in SPEC.md. This document addresses the fifth: **scope decomposition**. It defines how the charter is split, what each sub-spec looks like, how dependencies are tracked, and how the work flows from a stub into shippable code.
 
@@ -172,9 +172,9 @@ Required to ship (above the registry cut line):
 
 | ID | Sub-spec | Why it's MVP |
 |----|----------|--------------|
-| f-identity | Identity & auth | Anyone using chat needs an account |
+| f-identity-and-auth | Identity & auth | Anyone using chat needs an account |
 | f-workspace-policy | Workspace policy | Code Agent needs policy for destructive file changes |
-| f-billing (thin) | Billing | Need a cost-unit model to log against; dashboards come later |
+| f-billing-and-cost (thin) | Billing | Need a cost-unit model to log against; dashboards come later |
 | 00 | workspace-shell | Chat UI, threads, file attachments |
 | 01 | persistent-compute | The VM the Code Agent runs on |
 | 02 | code-agent | The single agent MVP ships |
@@ -193,7 +193,7 @@ Explicitly **not** MVP: router (trivial dispatch to code-agent suffices), skills
 - Land the scaffolding as a single atomic PR.
 
 **Step 2 — Stubs → drafts (dependency order)**
-- Start at the bottom of the graph: foundations first (`f-identity`, `f-workspace-policy`, `f-billing`).
+- Start at the bottom of the graph: foundations first (`f-identity-and-auth`, `f-workspace-policy`, `f-billing-and-cost`).
 - For each, run `/superpowers:brainstorming`. The brainstorming output fills in the template sections. Status moves `stub` → `drafted`.
 - Work up the graph. MVP sub-specs (`00`–`03`) come after their foundations.
 
@@ -221,7 +221,7 @@ Signals (1)–(4) are mechanical and can be spot-checked during PR review. Signa
 
 ## Out of scope (deferred)
 
-- **Further decomposition of foundation sub-specs.** `f-billing` and `f-multi-tenant-isolation` may themselves need splitting once their stubs are drafted. Revisit then.
+- **Further decomposition of foundation sub-specs.** `f-billing-and-cost` and `f-multi-tenant-isolation` may themselves need splitting once their stubs are drafted. Revisit then.
 - **Team workflow semantics.** See Workflow scope above.
 - Automated DAG rendering from the registry.
 - A linter that checks header/registry consistency.
