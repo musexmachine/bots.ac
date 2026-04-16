@@ -7,7 +7,7 @@ Research material informing sub-spec design (notably the Web Agent browsing stra
 ## Registry
 
 | ID  | Sub-spec                    | Status | Depends on             | Phase      | MVP |
-|-----|------------------------------|--------|------------------------|------------|-----|
+|-----|-----------------------------|--------|------------------------|------------|-----|
 | f-identity             | Identity and authentication       | stub   | —                      | foundation | yes |
 | f-workspace-policy     | Workspace policy                  | stub   | —                      | foundation | yes |
 | f-billing              | Billing and cost surface          | stub   | —                      | foundation | yes |
@@ -19,7 +19,7 @@ Research material informing sub-spec design (notably the Web Agent browsing stra
 | 01  | persistent-compute          | stub   | 00, f-workspace-policy | 1          | yes |
 | 02  | code-agent                  | stub   | 01, 11                 | 1          | yes |
 | 03  | audit-log                   | stub   | 00                     | 1          | yes |
-| --- | --------- MVP cut ---------  | ---    | ---                    | ---        | --- |
+| --- | --------- MVP cut --------- | ---    | ---                    | ---        | --- |
 | 10  | router-agent                | stub   | 11, 23                 | 1          | no  |
 | 11  | skills-loader               | stub   | 00                     | 1          | no  |
 | 12  | web-agent                   | stub   | 11, 01                 | 1          | no  |
