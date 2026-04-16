@@ -13,17 +13,41 @@ describe('AuthError', () => {
     const err = new AuthError('token expired')
     expect(err.message).toBe('token expired')
   })
+
+  it('is instanceof AuthError and Error', () => {
+    const err = new AuthError()
+    expect(err).toBeInstanceOf(AuthError)
+    expect(err).toBeInstanceOf(Error)
+  })
 })
 
 describe('ForbiddenError', () => {
-  it('has statusCode 403', () => {
-    expect(new ForbiddenError().statusCode).toBe(403)
+  it('has statusCode 403, name ForbiddenError, and default message', () => {
+    const err = new ForbiddenError()
+    expect(err.statusCode).toBe(403)
+    expect(err.name).toBe('ForbiddenError')
+    expect(err.message).toBe('Forbidden')
+  })
+
+  it('is instanceof ForbiddenError and Error', () => {
+    const err = new ForbiddenError()
+    expect(err).toBeInstanceOf(ForbiddenError)
+    expect(err).toBeInstanceOf(Error)
   })
 })
 
 describe('NotFoundError', () => {
-  it('has statusCode 404', () => {
-    expect(new NotFoundError().statusCode).toBe(404)
+  it('has statusCode 404, name NotFoundError, and default message', () => {
+    const err = new NotFoundError()
+    expect(err.statusCode).toBe(404)
+    expect(err.name).toBe('NotFoundError')
+    expect(err.message).toBe('Not found')
+  })
+
+  it('is instanceof NotFoundError and Error', () => {
+    const err = new NotFoundError()
+    expect(err).toBeInstanceOf(NotFoundError)
+    expect(err).toBeInstanceOf(Error)
   })
 })
 
@@ -33,5 +57,11 @@ describe('UsernameError', () => {
     expect(err.statusCode).toBe(400)
     expect(err.reason).toBe('rename limit reached')
     expect(err.message).toContain('rename limit reached')
+  })
+
+  it('is instanceof UsernameError and Error', () => {
+    const err = new UsernameError('test reason')
+    expect(err).toBeInstanceOf(UsernameError)
+    expect(err).toBeInstanceOf(Error)
   })
 })

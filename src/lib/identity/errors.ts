@@ -3,6 +3,7 @@ export class AuthError extends Error {
 
   constructor(message = 'Unauthorized') {
     super(message)
+    Object.setPrototypeOf(this, new.target.prototype)
     this.name = 'AuthError'
   }
 }
@@ -12,6 +13,7 @@ export class ForbiddenError extends Error {
 
   constructor(message = 'Forbidden') {
     super(message)
+    Object.setPrototypeOf(this, new.target.prototype)
     this.name = 'ForbiddenError'
   }
 }
@@ -21,6 +23,7 @@ export class NotFoundError extends Error {
 
   constructor(message = 'Not found') {
     super(message)
+    Object.setPrototypeOf(this, new.target.prototype)
     this.name = 'NotFoundError'
   }
 }
@@ -31,6 +34,7 @@ export class UsernameError extends Error {
 
   constructor(reason: string) {
     super(`Username error: ${reason}`)
+    Object.setPrototypeOf(this, new.target.prototype)
     this.name = 'UsernameError'
     this.reason = reason
   }
