@@ -8,7 +8,7 @@ Research material informing sub-spec design (notably the Web Agent browsing stra
 
 | ID  | Sub-spec                    | Status | Depends on             | Phase      | MVP |
 |-----|-----------------------------|--------|------------------------|------------|-----|
-| f-identity-and-auth             | Identity and authentication       | stub   | —                      | foundation | yes |
+| f-identity-and-auth             | Identity and authentication       | drafted | —                     | foundation | yes |
 | f-workspace-policy     | Workspace policy                  | stub   | —                      | foundation | yes |
 | f-billing-and-cost              | Billing and cost surface          | stub   | —                      | foundation | yes |
 | f-multi-tenant-isolation         | Multi-tenant isolation            | stub   | —                      | foundation | no  |
