@@ -1,5 +1,7 @@
 # bots.ac Specification
 
+> See `docs/decomposition.md` for the sub-spec registry. This document remains the product charter; detailed designs live under `docs/specs/`.
+
 ## Goal
 
 bots.ac is a chat-first operating system for practical agents.
