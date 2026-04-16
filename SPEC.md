@@ -153,9 +153,9 @@ Responsibilities:
 
 Default browsing strategy layer:
 
-- **SelfEvolvingAgent** (working name; specific framework/citation is an open decision)
+- **SelfEvolvingAgent** (working name; informed by `docs/self-learning-agents/` — see `docs/SELF_LEARNING_AGENTS.md` for the paper-by-paper assessment)
 
-The Web Agent requires a strategy layer for multi-step browsing, reflection on intermediate results, and adaptation mid-task. `SelfEvolvingAgent` is the current named candidate; any chosen strategy must support: step planning, intermediate reflection, failure recovery, and bounded self-adaptation within a single run (no cross-run mutation without approval). This constraint keeps the choice replaceable per product principle #6.
+The Web Agent requires a strategy layer for multi-step browsing, reflection on intermediate results, and adaptation mid-task. Candidate techniques drawn from that research (notably SAGE, Reflexion, Self-Refine, EvoTest) inform the capability criteria: any chosen strategy must support step planning, intermediate reflection, failure recovery, and bounded self-adaptation within a single run (no cross-run mutation without approval). This constraint keeps the choice replaceable per product principle #6.
 
 ### Media Agent
 
@@ -575,7 +575,7 @@ Automatic agent creation remains intentionally deferred.
 
 ### Self-learning agent review
 
-A dedicated research track that must produce a written decision document before any Agent Creator work begins. The review must define:
+A dedicated research track that must produce a written decision document before any Agent Creator work begins. The research material is collected in `docs/self-learning-agents/` (19 papers) with a curated summary in `docs/SELF_LEARNING_AGENTS.md`. The review must define:
 
 - acceptable adaptation loop
 - memory mutation rules
@@ -583,4 +583,4 @@ A dedicated research track that must produce a written decision document before 
 - evaluation criteria
 - rollback strategy
 
-Owner, timeline, and deliverable format are TBD and tracked outside this spec. Until the review concludes, bots.ac ships fixed built-in agents plus user-defined skills.
+Owner, timeline, and deliverable format are TBD. Until the review concludes, bots.ac ships fixed built-in agents plus user-defined skills.
