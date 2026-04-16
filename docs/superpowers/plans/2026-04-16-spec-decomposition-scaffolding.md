@@ -359,7 +359,7 @@ _To be drafted._
 
 **Status:** stub
 **Phase:** foundation
-**Depends on:** f-identity
+**Depends on:** f-identity-and-auth
 **Required for MVP:** no
 
 ## Context
@@ -470,7 +470,7 @@ git commit -m "docs: stub foundation sub-specs"
 
 **Status:** stub
 **Phase:** 1
-**Depends on:** f-identity
+**Depends on:** f-identity-and-auth
 **Required for MVP:** yes
 
 ## Context
@@ -797,7 +797,7 @@ _To be drafted._
 
 **Status:** stub
 **Phase:** 1
-**Depends on:** 11, 22, f-identity
+**Depends on:** 11, 22, f-identity-and-auth
 **Required for MVP:** no
 
 ## Context
@@ -999,7 +999,7 @@ _To be drafted._
 
 **Status:** stub
 **Phase:** 1
-**Depends on:** f-identity
+**Depends on:** f-identity-and-auth
 **Required for MVP:** no
 
 ## Context
@@ -1128,7 +1128,7 @@ _To be drafted._
 
 **Status:** stub
 **Phase:** 1
-**Depends on:** f-billing
+**Depends on:** f-billing-and-cost
 **Required for MVP:** no
 
 ## Context
@@ -1214,7 +1214,7 @@ _To be drafted._
 
 **Status:** stub
 **Phase:** 2
-**Depends on:** 03, f-billing
+**Depends on:** 03, f-billing-and-cost
 **Required for MVP:** no
 
 ## Context

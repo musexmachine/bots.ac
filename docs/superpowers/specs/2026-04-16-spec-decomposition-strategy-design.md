@@ -81,7 +81,7 @@ slice with its own design doc under docs/specs/.
 
 | ID  | Sub-spec                   | Status   | Depends on        | Phase |
 |-----|----------------------------|----------|-------------------|-------|
-| 00  | workspace-shell            | stub     | f-identity        | 1     |
+| 00  | workspace-shell            | stub     | f-identity-and-auth | 1     |
 | 01  | persistent-compute         | stub     | 00                | 1     |
 | 02  | code-agent                 | stub     | 01, 11            | 1     |
 | 03  | audit-log                  | stub     | 00                | 1     |
