@@ -226,7 +226,7 @@ _To be drafted._
 - [ ] **Step 3: Write `docs/specs/f-billing-and-cost.md`**
 
 ````markdown
-# f-billing — Billing and cost surface
+# f-billing-and-cost — Billing and cost surface
 
 **Status:** stub
 **Phase:** foundation
@@ -269,7 +269,7 @@ _To be drafted._
 - [ ] **Step 4: Write `docs/specs/f-multi-tenant-isolation.md`**
 
 ````markdown
-# f-multi-tenant — Multi-tenant isolation
+# f-multi-tenant-isolation — Multi-tenant isolation
 
 **Status:** stub
 **Phase:** foundation
@@ -398,7 +398,7 @@ _To be drafted._
 - [ ] **Step 7: Write `docs/specs/f-compliance-posture.md`**
 
 ````markdown
-# f-compliance — Compliance posture
+# f-compliance-posture — Compliance posture
 
 **Status:** stub
 **Phase:** foundation
@@ -1396,10 +1396,10 @@ Expected: no output. Any listed file has a non-stub status and should be reverte
 - [ ] **Step 4: Verify the MVP-cut row is present in the registry**
 
 ```bash
-grep -c "MVP cut" docs/decomposition.md
+grep -c -- "--------- MVP cut ---------" docs/decomposition.md
 ```
 
-Expected: `1` (appears only in the cut-line row — the phrase should not leak elsewhere).
+Expected: `1` (matches only the separator table row; the `## MVP cut line` section heading does not contain the dashes and will not match).
 
 - [ ] **Step 5: Commit fixes if any**
 
