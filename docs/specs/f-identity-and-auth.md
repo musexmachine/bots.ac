@@ -1,4 +1,4 @@
-# f-identity — Identity and authentication
+# f-identity-and-auth — Identity and authentication
 
 **Status:** stub
 **Phase:** foundation

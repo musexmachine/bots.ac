@@ -1,4 +1,4 @@
-# f-billing — Billing and cost surface
+# f-billing-and-cost — Billing and cost surface
 
 **Status:** stub
 **Phase:** foundation

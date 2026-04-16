@@ -15,7 +15,7 @@ Research material informing sub-spec design (notably the Web Agent browsing stra
 | f-data-retention       | Data retention and deletion       | stub   | —                      | foundation | no  |
 | f-public-api           | Public API                        | stub   | f-identity-and-auth             | foundation | no  |
 | f-compliance-posture                | Compliance posture                | stub   | —                      | foundation | no  |
-| 00  | workspace-shell             | stub   | f-identity             | 1          | yes |
+| 00  | workspace-shell             | stub   | f-identity-and-auth    | 1          | yes |
 | 01  | persistent-compute          | stub   | 00, f-workspace-policy | 1          | yes |
 | 02  | code-agent                  | stub   | 01, 11                 | 1          | yes |
 | 03  | audit-log                   | stub   | 00                     | 1          | yes |
@@ -39,6 +39,6 @@ Research material informing sub-spec design (notably the Web Agent browsing stra
 
 `stub` → `drafted` → `approved` → `in-flight` → `shipped`
 
-## Release cut line
+## MVP cut line
 
-Everything above the release separator row plus the `yes` foundation rows must ship for the first release (Chat + Code Agent on a persistent VM). Moving the separator is a registry edit with a commit-message rationale.
+Everything above the "MVP cut" row plus the `yes` foundation rows must ship for the first release (Chat + Code Agent on a persistent VM). Moving the cut line is a registry edit with a commit-message rationale.

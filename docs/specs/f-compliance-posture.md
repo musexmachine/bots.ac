@@ -1,4 +1,4 @@
-# f-compliance — Compliance posture
+# f-compliance-posture — Compliance posture
 
 **Status:** stub
 **Phase:** foundation

@@ -1,4 +1,4 @@
-# f-multi-tenant — Multi-tenant isolation
+# f-multi-tenant-isolation — Multi-tenant isolation
 
 **Status:** stub
 **Phase:** foundation

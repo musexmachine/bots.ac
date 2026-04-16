@@ -2,7 +2,7 @@
 
 **Status:** stub
 **Phase:** foundation
-**Depends on:** f-identity
+**Depends on:** f-identity-and-auth
 **Required for MVP:** no
 
 ## Context

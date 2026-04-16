@@ -2,7 +2,7 @@
 
 **Status:** stub
 **Phase:** 1
-**Depends on:** f-billing
+**Depends on:** f-billing-and-cost
 **Required for MVP:** no
 
 ## Context

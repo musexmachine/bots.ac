@@ -2,7 +2,7 @@
 
 **Status:** stub
 **Phase:** 1
-**Depends on:** 11, 22, f-identity
+**Depends on:** 11, 22, f-identity-and-auth
 **Required for MVP:** no
 
 ## Context
