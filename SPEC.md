@@ -417,7 +417,9 @@ The product surface should talk about capability, cost, and latency—not raw mo
 
 ### Approval boundaries
 
-Explicit approval required for:
+Explicit approval required for any side effect that falls outside the current workspace policy. A workspace policy may pre-authorize external side effects only when the connected account, capability scope, and destination bounds are explicitly allowed.
+
+This includes:
 
 - sending email
 - posting messages externally
