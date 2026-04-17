@@ -1,19 +1,22 @@
+import type { SupabaseUserId, UserId, WorkspaceId } from '../ids.js'
+
 export type User = {
-  userId: string
+  userId: UserId
   email: string
   username: string
+  supabaseUserId?: SupabaseUserId
 }
 
 export type WorkspaceMembership = {
-  workspaceId: string
-  userId: string
+  workspaceId: WorkspaceId
+  userId: UserId
   role: 'owner' | 'admin' | 'member' | 'viewer'
   joinedAt: Date
 }
 
 export type UserCreatedEvent = {
   type: 'user.created'
-  userId: string
+  userId: UserId
   email: string
   username: string
 }

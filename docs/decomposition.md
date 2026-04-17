@@ -10,7 +10,7 @@ Research material informing sub-spec design (notably the Web Agent browsing stra
 |-----|-----------------------------|--------|------------------------|------------|-----|
 | f-identity-and-auth             | Identity and authentication       | drafted | —                     | foundation | yes |
 | f-workspace-policy              | Workspace policy                  | drafted | —                     | foundation | yes |
-| f-billing-and-cost              | Billing and cost surface          | stub   | —                      | foundation | yes |
+| f-billing-and-cost              | Billing and cost surface          | drafted | —                      | foundation | yes |
 | 00  | workspace-shell             | stub   | f-identity-and-auth    | 1          | yes |
 | 01  | persistent-compute          | stub   | 00, f-workspace-policy | 1          | yes |
 | 02  | code-agent                  | stub   | 01                     | 1          | yes |

@@ -3,6 +3,15 @@ import {
   WorkspacePolicyValidationError,
 } from './errors.js'
 import { createActionFingerprint } from './evaluation.js'
+import {
+  assertOptionalUuid,
+  assertUuid,
+  type PolicyExceptionId,
+  type PolicyVersionId,
+  type RunId,
+  type UserId,
+  type WorkspaceId,
+} from '../ids.js'
 import type {
   PolicyAction,
   PolicyException,
@@ -13,25 +22,25 @@ import { validateWorkspacePolicyDocument } from './validation.js'
 
 type CreatePolicyVersionInput = {
   repository: WorkspacePolicyRepository
-  workspaceId: string
-  createdByUserId: string
+  workspaceId: WorkspaceId
+  createdByUserId: UserId
   policy: unknown
-  supersedesPolicyVersionId?: string | null
+  supersedesPolicyVersionId?: PolicyVersionId | null
 }
 
 type ApproveSingleActionExceptionInput<TAction extends PolicyAction = PolicyAction> = {
   repository: WorkspacePolicyRepository
-  workspaceId: string
-  runId: string
-  policyVersionId: string
+  workspaceId: WorkspaceId
+  runId: RunId
+  policyVersionId: PolicyVersionId
   agentType: PolicyException['agentType']
   action: TAction
-  approvedByUserId: string
+  approvedByUserId: UserId
 }
 
 type FindMatchingSingleActionExceptionInput = {
   repository: WorkspacePolicyRepository
-  runId: string
+  runId: RunId
   action: PolicyAction
 }
 
@@ -41,8 +50,8 @@ type InsertPolicyExceptionInput = Parameters<
 
 async function assertWorkspaceOwner(
   repository: WorkspacePolicyRepository,
-  workspaceId: string,
-  userId: string,
+  workspaceId: WorkspaceId,
+  userId: UserId,
 ): Promise<void> {
   const role = await repository.getWorkspaceRole(userId, workspaceId)
 
@@ -51,6 +60,67 @@ async function assertWorkspaceOwner(
       'Only workspace owners may edit policy or approve exceptions',
     )
   }
+}
+
+function createValidationError(message: string): WorkspacePolicyValidationError {
+  return new WorkspacePolicyValidationError(message)
+}
+
+function assertWorkspaceId(value: unknown, fieldName: string): WorkspaceId {
+  return assertUuid<WorkspaceId, WorkspacePolicyValidationError>(
+    value,
+    fieldName,
+    createValidationError,
+  )
+}
+
+function assertRunId(value: unknown, fieldName: string): RunId {
+  return assertUuid<RunId, WorkspacePolicyValidationError>(
+    value,
+    fieldName,
+    createValidationError,
+  )
+}
+
+function assertPolicyVersionId(
+  value: unknown,
+  fieldName: string,
+): PolicyVersionId | null | undefined {
+  return assertOptionalUuid<PolicyVersionId, WorkspacePolicyValidationError>(
+    value,
+    fieldName,
+    createValidationError,
+  )
+}
+
+function assertRequiredPolicyVersionId(
+  value: unknown,
+  fieldName: string,
+): PolicyVersionId {
+  return assertUuid<PolicyVersionId, WorkspacePolicyValidationError>(
+    value,
+    fieldName,
+    createValidationError,
+  )
+}
+
+function assertPolicyExceptionId(
+  value: unknown,
+  fieldName: string,
+): PolicyExceptionId {
+  return assertUuid<PolicyExceptionId, WorkspacePolicyValidationError>(
+    value,
+    fieldName,
+    createValidationError,
+  )
+}
+
+function assertUserId(value: unknown, fieldName: string): UserId {
+  return assertUuid<UserId, WorkspacePolicyValidationError>(
+    value,
+    fieldName,
+    createValidationError,
+  )
 }
 
 function isUniqueConstraintError(error: unknown): boolean {
@@ -120,59 +190,69 @@ function createPolicyExceptionInput(
 
 export async function getActivePolicyVersion(
   repository: WorkspacePolicyRepository,
-  workspaceId: string,
+  workspaceId: WorkspaceId,
 ): Promise<PolicyVersion | null> {
-  return repository.getLatestPolicyVersion(workspaceId)
+  return repository.getLatestPolicyVersion(
+    assertWorkspaceId(workspaceId, 'workspaceId'),
+  )
 }
 
 export async function createPolicyVersion(
   input: CreatePolicyVersionInput,
 ): Promise<PolicyVersion> {
+  const workspaceId = assertWorkspaceId(input.workspaceId, 'workspaceId')
+  const createdByUserId = assertUserId(input.createdByUserId, 'createdByUserId')
+  const hasExplicitSupersedesPolicyVersionId =
+    input.supersedesPolicyVersionId !== undefined
+  const supersedesPolicyVersionId = assertPolicyVersionId(
+    input.supersedesPolicyVersionId,
+    'supersedesPolicyVersionId',
+  )
   await assertWorkspaceOwner(
     input.repository,
-    input.workspaceId,
-    input.createdByUserId,
+    workspaceId,
+    createdByUserId,
   )
 
   const validatedPolicy = validateWorkspacePolicyDocument(input.policy)
-  const latestVersion = await input.repository.getLatestPolicyVersion(
-    input.workspaceId,
-  )
+  const latestVersion = await input.repository.getLatestPolicyVersion(workspaceId)
   let currentLatestVersion = latestVersion
   let expectedSupersededPolicyVersionId = currentLatestVersion?.policyVersionId ?? null
 
   if (
-    input.supersedesPolicyVersionId !== undefined &&
-    input.supersedesPolicyVersionId !== expectedSupersededPolicyVersionId
+    hasExplicitSupersedesPolicyVersionId &&
+    supersedesPolicyVersionId !== expectedSupersededPolicyVersionId
   ) {
     throw new WorkspacePolicyValidationError(
       'supersedesPolicyVersionId must match the latest workspace policy version',
     )
   }
 
-  const maxAttempts = input.supersedesPolicyVersionId === undefined ? 2 : 1
+  const maxAttempts = hasExplicitSupersedesPolicyVersionId ? 1 : 2
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     try {
       return await input.repository.insertPolicyVersion({
-        workspaceId: input.workspaceId,
+        workspaceId,
         version: currentLatestVersion ? currentLatestVersion.version + 1 : 1,
         policy: validatedPolicy,
-        createdByUserId: input.createdByUserId,
-        supersedesPolicyVersionId: expectedSupersededPolicyVersionId,
+        createdByUserId,
+        supersedesPolicyVersionId: hasExplicitSupersedesPolicyVersionId
+          ? supersedesPolicyVersionId ?? null
+          : expectedSupersededPolicyVersionId,
       })
     } catch (error) {
       if (!isUniqueConstraintError(error)) {
         throw error
       }
 
-      if (input.supersedesPolicyVersionId !== undefined) {
+      if (hasExplicitSupersedesPolicyVersionId) {
         throw new WorkspacePolicyValidationError(
           'supersedesPolicyVersionId must match the latest workspace policy version',
         )
       }
 
-      currentLatestVersion = await input.repository.getLatestPolicyVersion(input.workspaceId)
+      currentLatestVersion = await input.repository.getLatestPolicyVersion(workspaceId)
       expectedSupersededPolicyVersionId = currentLatestVersion?.policyVersionId ?? null
     }
   }
@@ -183,20 +263,27 @@ export async function createPolicyVersion(
 export async function approveSingleActionException<TAction extends PolicyAction>(
   input: ApproveSingleActionExceptionInput<TAction>,
 ): Promise<PolicyException> {
+  const workspaceId = assertWorkspaceId(input.workspaceId, 'workspaceId')
+  const runId = assertRunId(input.runId, 'runId')
+  const policyVersionId = assertRequiredPolicyVersionId(
+    input.policyVersionId,
+    'policyVersionId',
+  )
+  const approvedByUserId = assertUserId(input.approvedByUserId, 'approvedByUserId')
   await assertWorkspaceOwner(
     input.repository,
-    input.workspaceId,
-    input.approvedByUserId,
+    workspaceId,
+    approvedByUserId,
   )
 
   return input.repository.insertPolicyException(
     createPolicyExceptionInput({
-      workspaceId: input.workspaceId,
-      runId: input.runId,
-      policyVersionId: input.policyVersionId,
+      workspaceId,
+      runId,
+      policyVersionId,
       agentType: input.agentType,
       action: input.action,
-      approvedByUserId: input.approvedByUserId,
+      approvedByUserId,
     }),
   )
 }
@@ -205,14 +292,17 @@ export async function findMatchingSingleActionException(
   input: FindMatchingSingleActionExceptionInput,
 ): Promise<PolicyException | null> {
   return input.repository.findUnconsumedException(
-    input.runId,
+    assertRunId(input.runId, 'runId'),
     createActionFingerprint(input.action),
   )
 }
 
 export async function consumeSingleActionException(
   repository: WorkspacePolicyRepository,
-  policyExceptionId: string,
+  policyExceptionId: PolicyExceptionId,
 ): Promise<void> {
-  await repository.markExceptionConsumed(policyExceptionId, new Date())
+  await repository.markExceptionConsumed(
+    assertPolicyExceptionId(policyExceptionId, 'policyExceptionId'),
+    new Date(),
+  )
 }

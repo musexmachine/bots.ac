@@ -1,3 +1,11 @@
+import type {
+  PolicyExceptionId,
+  PolicyVersionId,
+  RunId,
+  UserId,
+  WorkspaceId,
+} from '../ids.js'
+
 export const BUILT_IN_AGENT_TYPES = [
   'code-agent',
   'web-agent',
@@ -119,13 +127,13 @@ export type PolicyAction =
   | IntegrationWriteAction
 
 type PolicyExceptionBase = {
-  policyExceptionId: string
-  workspaceId: string
-  runId: string
-  policyVersionId: string
+  policyExceptionId: PolicyExceptionId
+  workspaceId: WorkspaceId
+  runId: RunId
+  policyVersionId: PolicyVersionId
   agentType: BuiltInAgentType
   targetFingerprint: string
-  approvedByUserId: string
+  approvedByUserId: UserId
   approvedAt: Date
   consumedAt: Date | null
 }
@@ -138,13 +146,13 @@ export type PolicyException = {
 }[PolicyAction['type']]
 
 export type PolicyVersion = {
-  policyVersionId: string
-  workspaceId: string
+  policyVersionId: PolicyVersionId
+  workspaceId: WorkspaceId
   version: number
   policy: WorkspacePolicyDocument
-  createdByUserId: string
+  createdByUserId: UserId
   createdAt: Date
-  supersedesPolicyVersionId: string | null
+  supersedesPolicyVersionId: PolicyVersionId | null
 }
 
 export type PolicyEvaluationInput = {
@@ -162,8 +170,8 @@ export type PolicyEvaluationResult =
 export type WorkspaceRole = 'owner' | 'admin' | 'member' | 'viewer'
 
 export type WorkspacePolicyRepository = {
-  getWorkspaceRole(userId: string, workspaceId: string): Promise<WorkspaceRole | null>
-  getLatestPolicyVersion(workspaceId: string): Promise<PolicyVersion | null>
+  getWorkspaceRole(userId: UserId, workspaceId: WorkspaceId): Promise<WorkspaceRole | null>
+  getLatestPolicyVersion(workspaceId: WorkspaceId): Promise<PolicyVersion | null>
   insertPolicyVersion(
     input: Omit<PolicyVersion, 'policyVersionId' | 'createdAt'>,
   ): Promise<PolicyVersion>
@@ -171,8 +179,8 @@ export type WorkspacePolicyRepository = {
     input: Omit<PolicyException, 'policyExceptionId' | 'approvedAt' | 'consumedAt'>,
   ): Promise<PolicyException>
   findUnconsumedException(
-    runId: string,
+    runId: RunId,
     targetFingerprint: string,
   ): Promise<PolicyException | null>
-  markExceptionConsumed(policyExceptionId: string, consumedAt: Date): Promise<void>
+  markExceptionConsumed(policyExceptionId: PolicyExceptionId, consumedAt: Date): Promise<void>
 }

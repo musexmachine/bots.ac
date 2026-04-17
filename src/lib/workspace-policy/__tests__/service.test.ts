@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { testUuid } from '../../__tests__/helpers/ids.ts'
 import {
   PolicyPermissionError,
   WorkspacePolicyValidationError,
@@ -23,12 +24,18 @@ type InsertPolicyExceptionInput = Parameters<
   WorkspacePolicyRepository['insertPolicyException']
 >[0]
 
+const WORKSPACE_ID = testUuid(1)
+const USER_ID = testUuid(2)
+const RUN_ID = testUuid(3)
+const OTHER_RUN_ID = testUuid(4)
+const STATIC_POLICY_VERSION_ID = testUuid(5)
+
 function createPolicyException(
   input: InsertPolicyExceptionInput,
   index: number,
 ): PolicyException {
   const base = {
-    policyExceptionId: `exc_${index + 1}`,
+    policyExceptionId: testUuid(200 + index),
     approvedAt: new Date(`2026-04-16T21:0${index}:00.000Z`),
     consumedAt: null,
     ...input,
@@ -79,7 +86,7 @@ function createRepository(
     },
     async insertPolicyVersion(input) {
       const version: PolicyVersion = {
-        policyVersionId: `pv_${versions.length + 1}`,
+        policyVersionId: testUuid(100 + versions.length),
         createdAt: new Date(`2026-04-16T2${versions.length}:00:00.000Z`),
         ...input,
       }
@@ -118,57 +125,57 @@ function createRepository(
 
 describe('createPolicyVersion', () => {
   it('requires the workspace owner role', async () => {
-    const repository = createRepository({ 'ws_1:user_1': 'member' })
+    const repository = createRepository({ [`${WORKSPACE_ID}:${USER_ID}`]: 'member' })
 
     await expect(() =>
       createPolicyVersion({
         repository,
-        workspaceId: 'ws_1',
-        createdByUserId: 'user_1',
+        workspaceId: WORKSPACE_ID,
+        createdByUserId: USER_ID,
         policy: createDefaultWorkspacePolicy(),
       }),
     ).rejects.toBeInstanceOf(PolicyPermissionError)
   })
 
   it('increments the version number per workspace', async () => {
-    const repository = createRepository({ 'ws_1:user_1': 'owner' })
+    const repository = createRepository({ [`${WORKSPACE_ID}:${USER_ID}`]: 'owner' })
 
     const first = await createPolicyVersion({
       repository,
-      workspaceId: 'ws_1',
-      createdByUserId: 'user_1',
+      workspaceId: WORKSPACE_ID,
+      createdByUserId: USER_ID,
       policy: createDefaultWorkspacePolicy(),
     })
 
     const second = await createPolicyVersion({
       repository,
-      workspaceId: 'ws_1',
-      createdByUserId: 'user_1',
+      workspaceId: WORKSPACE_ID,
+      createdByUserId: USER_ID,
       policy: createDefaultWorkspacePolicy(),
       supersedesPolicyVersionId: first.policyVersionId,
     })
 
     expect(first.version).toBe(1)
     expect(second.version).toBe(2)
-    expect((await getActivePolicyVersion(repository, 'ws_1'))?.policyVersionId).toBe(
+    expect((await getActivePolicyVersion(repository, WORKSPACE_ID))?.policyVersionId).toBe(
       second.policyVersionId,
     )
   })
 
   it('rejects superseding a non-latest version', async () => {
-    const repository = createRepository({ 'ws_1:user_1': 'owner' })
+    const repository = createRepository({ [`${WORKSPACE_ID}:${USER_ID}`]: 'owner' })
 
     const first = await createPolicyVersion({
       repository,
-      workspaceId: 'ws_1',
-      createdByUserId: 'user_1',
+      workspaceId: WORKSPACE_ID,
+      createdByUserId: USER_ID,
       policy: createDefaultWorkspacePolicy(),
     })
 
     await createPolicyVersion({
       repository,
-      workspaceId: 'ws_1',
-      createdByUserId: 'user_1',
+      workspaceId: WORKSPACE_ID,
+      createdByUserId: USER_ID,
       policy: createDefaultWorkspacePolicy(),
       supersedesPolicyVersionId: first.policyVersionId,
     })
@@ -176,21 +183,44 @@ describe('createPolicyVersion', () => {
     await expect(() =>
       createPolicyVersion({
         repository,
-        workspaceId: 'ws_1',
-        createdByUserId: 'user_1',
+        workspaceId: WORKSPACE_ID,
+        createdByUserId: USER_ID,
         policy: createDefaultWorkspacePolicy(),
         supersedesPolicyVersionId: first.policyVersionId,
       }),
     ).rejects.toBeInstanceOf(WorkspacePolicyValidationError)
   })
 
-  it('retries cleanly when an implicit latest-version insert loses a race', async () => {
-    const repository = createRepository({ 'ws_1:user_1': 'owner' })
+  it('rejects an explicit null supersedesPolicyVersionId when a latest version exists', async () => {
+    const repository = createRepository({ [`${WORKSPACE_ID}:${USER_ID}`]: 'owner' })
 
     await createPolicyVersion({
       repository,
-      workspaceId: 'ws_1',
-      createdByUserId: 'user_1',
+      workspaceId: WORKSPACE_ID,
+      createdByUserId: USER_ID,
+      policy: createDefaultWorkspacePolicy(),
+    })
+
+    await expect(() =>
+      createPolicyVersion({
+        repository,
+        workspaceId: WORKSPACE_ID,
+        createdByUserId: USER_ID,
+        policy: createDefaultWorkspacePolicy(),
+        supersedesPolicyVersionId: null,
+      }),
+    ).rejects.toThrow(
+      'supersedesPolicyVersionId must match the latest workspace policy version',
+    )
+  })
+
+  it('retries cleanly when an implicit latest-version insert loses a race', async () => {
+    const repository = createRepository({ [`${WORKSPACE_ID}:${USER_ID}`]: 'owner' })
+
+    await createPolicyVersion({
+      repository,
+      workspaceId: WORKSPACE_ID,
+      createdByUserId: USER_ID,
       policy: createDefaultWorkspacePolicy(),
     })
 
@@ -217,8 +247,8 @@ describe('createPolicyVersion', () => {
 
     const created = await createPolicyVersion({
       repository: racingRepository,
-      workspaceId: 'ws_1',
-      createdByUserId: 'user_1',
+      workspaceId: WORKSPACE_ID,
+      createdByUserId: USER_ID,
       policy: createDefaultWorkspacePolicy(),
     })
 
@@ -226,12 +256,12 @@ describe('createPolicyVersion', () => {
   })
 
   it('turns a raced explicit supersede into a validation error', async () => {
-    const repository = createRepository({ 'ws_1:user_1': 'owner' })
+    const repository = createRepository({ [`${WORKSPACE_ID}:${USER_ID}`]: 'owner' })
 
     const first = await createPolicyVersion({
       repository,
-      workspaceId: 'ws_1',
-      createdByUserId: 'user_1',
+      workspaceId: WORKSPACE_ID,
+      createdByUserId: USER_ID,
       policy: createDefaultWorkspacePolicy(),
     })
 
@@ -259,8 +289,8 @@ describe('createPolicyVersion', () => {
     await expect(() =>
       createPolicyVersion({
         repository: racingRepository,
-        workspaceId: 'ws_1',
-        createdByUserId: 'user_1',
+        workspaceId: WORKSPACE_ID,
+        createdByUserId: USER_ID,
         policy: createDefaultWorkspacePolicy(),
         supersedesPolicyVersionId: first.policyVersionId,
       }),
@@ -268,13 +298,26 @@ describe('createPolicyVersion', () => {
       'supersedesPolicyVersionId must match the latest workspace policy version',
     )
   })
+
+  it('rejects non-UUID workspace ids at the service boundary', async () => {
+    const repository = createRepository({ [`${WORKSPACE_ID}:${USER_ID}`]: 'owner' })
+
+    await expect(() =>
+      createPolicyVersion({
+        repository,
+        workspaceId: 'ws_1' as never,
+        createdByUserId: USER_ID,
+        policy: createDefaultWorkspacePolicy(),
+      }),
+    ).rejects.toThrow('workspaceId must be a valid UUID')
+  })
 })
 
 describe('single-action exceptions', () => {
   let repository: WorkspacePolicyRepository
 
   beforeEach(() => {
-    repository = createRepository({ 'ws_1:user_1': 'owner' })
+    repository = createRepository({ [`${WORKSPACE_ID}:${USER_ID}`]: 'owner' })
   })
 
   it('stores and finds an exact matching exception', async () => {
@@ -289,19 +332,19 @@ describe('single-action exceptions', () => {
 
     const exception = await approveSingleActionException({
       repository,
-      workspaceId: 'ws_1',
-      runId: 'run_1',
-      policyVersionId: 'pv_1',
+      workspaceId: WORKSPACE_ID,
+      runId: RUN_ID,
+      policyVersionId: STATIC_POLICY_VERSION_ID,
       agentType: 'code-agent',
       action,
-      approvedByUserId: 'user_1',
+      approvedByUserId: USER_ID,
     })
 
     expect(exception.targetFingerprint).toBe(createActionFingerprint(action))
 
     const found = await findMatchingSingleActionException({
       repository,
-      runId: 'run_1',
+      runId: RUN_ID,
       action,
     })
 
@@ -309,14 +352,14 @@ describe('single-action exceptions', () => {
   })
 
   it('requires the workspace owner role to approve an exception', async () => {
-    repository = createRepository({ 'ws_1:user_1': 'member' })
+    repository = createRepository({ [`${WORKSPACE_ID}:${USER_ID}`]: 'member' })
 
     await expect(() =>
       approveSingleActionException({
         repository,
-        workspaceId: 'ws_1',
-        runId: 'run_1',
-        policyVersionId: 'pv_1',
+        workspaceId: WORKSPACE_ID,
+        runId: RUN_ID,
+        policyVersionId: STATIC_POLICY_VERSION_ID,
         agentType: 'code-agent',
         action: {
           type: 'file.change',
@@ -326,7 +369,7 @@ describe('single-action exceptions', () => {
             insideWorkspaceRoot: false,
           },
         },
-        approvedByUserId: 'user_1',
+        approvedByUserId: USER_ID,
       }),
     ).rejects.toBeInstanceOf(PolicyPermissionError)
   })
@@ -343,23 +386,23 @@ describe('single-action exceptions', () => {
 
     await approveSingleActionException({
       repository,
-      workspaceId: 'ws_1',
-      runId: 'run_1',
-      policyVersionId: 'pv_1',
+      workspaceId: WORKSPACE_ID,
+      runId: RUN_ID,
+      policyVersionId: STATIC_POLICY_VERSION_ID,
       agentType: 'code-agent',
       action,
-      approvedByUserId: 'user_1',
+      approvedByUserId: USER_ID,
     })
 
     const differentRun = await findMatchingSingleActionException({
       repository,
-      runId: 'run_2',
+      runId: OTHER_RUN_ID,
       action,
     })
 
     const differentTarget = await findMatchingSingleActionException({
       repository,
-      runId: 'run_1',
+      runId: RUN_ID,
       action: {
         type: 'file.change',
         target: {
@@ -384,22 +427,60 @@ describe('single-action exceptions', () => {
 
     const exception = await approveSingleActionException({
       repository,
-      workspaceId: 'ws_1',
-      runId: 'run_1',
-      policyVersionId: 'pv_1',
+      workspaceId: WORKSPACE_ID,
+      runId: RUN_ID,
+      policyVersionId: STATIC_POLICY_VERSION_ID,
       agentType: 'web-agent',
       action,
-      approvedByUserId: 'user_1',
+      approvedByUserId: USER_ID,
     })
 
     await consumeSingleActionException(repository, exception.policyExceptionId)
 
     const found = await findMatchingSingleActionException({
       repository,
-      runId: 'run_1',
+      runId: RUN_ID,
       action,
     })
 
     expect(found).toBeNull()
+  })
+
+  it('rejects non-UUID run ids at the exception approval boundary', async () => {
+    await expect(() =>
+      approveSingleActionException({
+        repository,
+        workspaceId: WORKSPACE_ID,
+        runId: 'run_1' as never,
+        policyVersionId: STATIC_POLICY_VERSION_ID,
+        agentType: 'code-agent',
+        action: {
+          type: 'browser.session',
+          target: {
+            persistent: true,
+          },
+        },
+        approvedByUserId: USER_ID,
+      }),
+    ).rejects.toThrow('runId must be a valid UUID')
+  })
+
+  it('rejects missing policyVersionId at the exception approval boundary', async () => {
+    await expect(() =>
+      approveSingleActionException({
+        repository,
+        workspaceId: WORKSPACE_ID,
+        runId: RUN_ID,
+        policyVersionId: null as never,
+        agentType: 'code-agent',
+        action: {
+          type: 'browser.session',
+          target: {
+            persistent: true,
+          },
+        },
+        approvedByUserId: USER_ID,
+      }),
+    ).rejects.toThrow('policyVersionId must be a valid UUID')
   })
 })
