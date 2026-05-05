@@ -1228,3 +1228,19 @@ After all tasks are done, verify:
 - [ ] `grep -r "from '@supabase/supabase-js'" src/ --include="*.ts" | grep -v "src/lib/identity/"` returns empty
 - [ ] `db/migrations/0001_identity.sql` is applied to the Supabase project
 - [ ] `.env.example` is committed; `.env` is gitignored
+
+
+## UI direction requirement (OpenUI)
+
+All user-facing bots.ac UI work should be driven by OpenUI (`https://www.openui.com/`) rather than hand-authored static chat rendering. Plan updates and sub-specs should assume:
+
+- OpenUI Lang as the LLM response format for generative UI (not markdown/JSON fallbacks by default).
+- A component-library-first contract (`defineComponent`/library prompt generation) so UI surfaces are bounded and safe.
+- Streaming render via OpenUI parser/renderer so structure appears before data is complete.
+- Build/dev scripts regenerate system prompt (`openui generate`) from the component library as part of normal workflows.
+
+When drafting implementation plans, add explicit tasks for:
+1. Defining the component library entrypoint for each UI surface.
+2. Generating and versioning the OpenUI system prompt artifact.
+3. Wiring backend chat routes to include the generated OpenUI prompt and stream OpenUI Lang responses.
+4. Rendering those responses with OpenUI runtime components in the client.
